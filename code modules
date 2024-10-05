@@ -1,0 +1,304 @@
+1.// SplashScreen.js
+import React, { useEffect } from 'react';
+import { View, Image, StyleSheet } from 'react-native';
+
+const SplashScreen = ({ navigation }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.replace('Auth'); // Navigate to Auth screen after 3 seconds
+    }, 3000);
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [navigation]);
+
+  return (
+    <View style={styles.container}>
+      <Image source={require('./assets/arogyamitra.png')} style={styles.logo} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logo: {
+    width: 200,
+    height: 200,
+  },
+});
+
+export default SplashScreen;
+
+2.// AuthScreen.js
+import React from 'react';
+import { View, Text, Button, StyleSheet } from 'react-native';
+
+const AuthScreen = ({ navigation }) => {
+  return (
+    <View style={styles.container}>
+      <Text>Welcome to ArogyaMitra</Text>
+      <Button title="Register" onPress={() => navigation.navigate('Register')} />
+      <Button title="Login" onPress={() => navigation.navigate('Login')} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+export default AuthScreen;
+
+3.// RegisterScreen.js
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+
+const RegisterScreen = ({ navigation }) => {
+  const [aadhar, setAadhar] = useState('');
+  const [mobile, setMobile] = useState('');
+
+  const handleRegister = () => {
+    // Validate Aadhar
+    if (aadhar.length !== 12) {
+      Alert.alert('Invalid Aadhar Number');
+      return;
+    }
+    // Validate Mobile
+    if (mobile.length !== 10) {
+      Alert.alert('Invalid Mobile Number');
+      return;
+    }
+
+    Alert.alert('OTP Sent Successfully');
+    navigation.navigate('CreatePassword'); // Navigate to password creation
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput placeholder="Aadhar Number" onChangeText={setAadhar} keyboardType="numeric" />
+      <TextInput placeholder="Mobile Number" onChangeText={setMobile} keyboardType="numeric" />
+      <Button title="Register" onPress={handleRegister} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+});
+
+export default RegisterScreen;
+
+4.// CreatePasswordScreen.js
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+
+const CreatePasswordScreen = ({ navigation }) => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleCreatePassword = () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Passwords do not match');
+      return;
+    }
+    Alert.alert('Password Created Successfully');
+    navigation.navigate('Login'); // Navigate to Login
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput placeholder="Create Password" secureTextEntry onChangeText={setPassword} />
+      <TextInput placeholder="Confirm Password" secureTextEntry onChangeText={setConfirmPassword} />
+      <Button title="Submit" onPress={handleCreatePassword} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+});
+
+export default CreatePasswordScreen;
+
+5.// LoginScreen.js
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+
+const LoginScreen = ({ navigation }) => {
+  const [abhaId, setAbhaId] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    // You should implement your login logic here
+    Alert.alert('Logged in Successfully');
+    navigation.navigate('Home'); // Navigate to Home
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput placeholder="ABHA ID" onChangeText={setAbhaId} />
+      <TextInput placeholder="Password" secureTextEntry onChangeText={setPassword} />
+      <Button title="Login" onPress={handleLogin} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+});
+
+export default LoginScreen;
+
+6.// HomeScreen.js
+import React from 'react';
+import { View, Text, Button, StyleSheet } from 'react-native';
+
+const HomeScreen = ({ navigation }) => {
+  return (
+    <View style={styles.container}>
+      <Text>Home Screen</Text>
+      <Button title="Book Appointment" onPress={() => { /* Add booking logic */ }} />
+      <Button title="Cancel Appointment" onPress={() => { /* Add cancelling logic */ }} />
+      <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+});
+
+export default HomeScreen;
+
+7.// ProfileScreen.js
+import React, { useState } from 'react';
+import { View, TextInput, Button, Image, StyleSheet, Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+
+const ProfileScreen = () => {
+  const [name, setName] = useState('');
+  const [aadhar, setAadhar] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const [allergies, setAllergies] = useState('');
+  const [profilePic, setProfilePic] = useState(null);
+
+  const handleImagePick = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync();
+    if (!result.canceled) {
+      setProfilePic(result.assets[0].uri);
+    }
+  };
+
+  const handleUpdateProfile = () => {
+    Alert.alert('Profile Updated Successfully');
+    // Here you can save the profile details to the backend
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput placeholder="Full Name" onChangeText={setName} />
+      <TextInput placeholder="Aadhar Number" onChangeText={setAadhar} keyboardType="numeric" />
+      <TextInput placeholder="Age" onChangeText={setAge} keyboardType="numeric" />
+      <TextInput placeholder="Gender" onChangeText={setGender} />
+      <TextInput placeholder="Allergies" onChangeText={setAllergies} />
+      <Button title="Pick Profile Picture" onPress={handleImagePick} />
+      {profilePic && <Image source={{ uri: profilePic }} style={{ width: 100, height: 100 }} />}
+      <Button title="Update Profile" onPress={handleUpdateProfile} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+});
+
+export default ProfileScreen;
+
+8.// ScanScreen.js
+import React from 'react';
+import { View, Button, StyleSheet } from 'react-native';
+import { RNCamera } from 'react-native-camera';
+
+const ScanScreen = () => {
+  const handleScan = () => {
+    // Implement scan and share patient details logic
+  };
+
+  return (
+    <View style={styles.container}>
+      <RNCamera style={{ flex: 1 }} />
+      <Button title="Scan and Share" onPress={handleScan} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
+export default ScanScreen;
+
+9.// App.js
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+import SplashScreen from './SplashScreen';
+import AuthScreen from './AuthScreen';
+import RegisterScreen from './RegisterScreen';
+import CreatePasswordScreen from './CreatePasswordScreen';
+import LoginScreen from './LoginScreen';
+import HomeScreen from './HomeScreen';
+import ProfileScreen from './ProfileScreen';
+import ScanScreen from './ScanScreen';
+
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Splash">
+        <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Auth" component={AuthScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="CreatePassword" component={CreatePasswordScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Scan" component={ScanScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default App;
